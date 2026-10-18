@@ -1,11 +1,18 @@
-
-import React from 'react'
-import { Container, Navbar, Nav, Button } from 'react-bootstrap'
+import React, { useState } from 'react'
+import { Container, Navbar, Nav, Dropdown } from 'react-bootstrap'
 import { FaLandmark, FaUserCircle } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
+import { getLoggedUser, logoutUser } from '../utils/auth'
 
 function Header({ insideLogin }) {
   const navigate = useNavigate()
+  const [loggedUser, setLoggedUser] = useState(getLoggedUser())
+
+  const handleLogout = () => {
+    logoutUser()
+    setLoggedUser(null)
+    navigate('/login')
+  }
 
   return (
     <Navbar
@@ -68,26 +75,54 @@ function Header({ insideLogin }) {
           )}
 
           <div className="d-flex align-items-center gap-3 mt-3 mt-lg-0 ms-lg-auto">
-            <Button
-              onClick={() => navigate('/login')}
-              style={{
-                backgroundColor: '#176B52',
-                border: 'none',
-                padding: '9px 20px',
-                borderRadius: '8px',
-                boxShadow: 'none'
-              }}
-            >
-              Get Started
-            </Button>
+            {loggedUser ? (
+              <Dropdown align="end">
+                <Dropdown.Toggle
+                  variant="light"
+                  className="d-flex align-items-center gap-2"
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    boxShadow: 'none',
+                    color: '#176B52',
+                    fontWeight: '500'
+                  }}
+                >
+                  <FaUserCircle size={30} />
+                  <span>{loggedUser.name}</span>
+                </Dropdown.Toggle>
 
-            <FaUserCircle
-              size={30}
-              color="#176B52"
-              title="Login"
-              style={{ cursor: 'pointer' }}
-              onClick={() => navigate('/login')}
-            />
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => navigate('/profile')}>
+                    View Profile
+                  </Dropdown.Item>
+
+                  <Dropdown.Divider />
+
+                  <Dropdown.Item
+                    onClick={handleLogout}
+                    className="text-danger"
+                  >
+                    Logout
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            ) : (
+              !insideLogin && (
+                <div
+                  className="d-flex align-items-center gap-2"
+                  onClick={() => navigate('/login')}
+                  style={{
+                    cursor: 'pointer',
+                    color: '#176B52',
+                    fontWeight: '500'
+                  }}
+                >
+                  <FaUserCircle size={30} />
+                  <span>Login</span>
+                </div>
+              )
+            )}
           </div>
         </Navbar.Collapse>
       </Container>

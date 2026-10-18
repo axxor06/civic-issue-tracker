@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react'
 import { Container, Form, Button, Card } from 'react-bootstrap'
 import {
@@ -8,24 +7,54 @@ import {
   FaEye,
   FaEyeSlash
 } from 'react-icons/fa'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import api from '../utils/api'
 import Header from '../Components/Header'
 import Footer from '../Components/Footer'
+import { saveLoggedUser } from '../utils/auth'
 
 function Login() {
+  const navigate = useNavigate()
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
 
-    if (!email.trim() || !password.trim()) {
-      setError('Please enter your email and password.')
-      return
-    }
+    try {
+      setLoading(true)
 
-    setError('Login API is not connected yet.')
+      const response = await api.get('/users')
+
+      const user = response.data.find(
+        (item) =>
+          item.email.toLowerCase() === email.trim().toLowerCase() &&
+          item.password === password
+      )
+
+      if (!user) {
+        toast.error('Invalid email or password!')
+        return
+      }
+
+      saveLoggedUser(user)
+
+      toast.success('Login successful!')
+
+      if (user.role === 'admin') {
+        navigate('/admin')
+      } else {
+        navigate('/dashboard')
+      }
+    } catch {
+      toast.error('Unable to log in. Make sure JSON Server is running!')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -34,11 +63,9 @@ function Login() {
 
       <main
         style={{
-          minHeight: '90vh',
+          minHeight: '85vh',
           background: 'linear-gradient(135deg, #f0f9f5, #ffffff)',
-          padding: '50px 15px',
-          display: 'flex',
-          alignItems: 'center'
+          padding: '50px 15px'
         }}
       >
         <Container>
@@ -70,35 +97,18 @@ function Login() {
                       <FaLandmark size={32} />
                     </div>
 
-                    <h2
-                      style={{
-                        fontWeight: '800',
-                        color: '#212529'
-                      }}
-                    >
-                      Welcome to Civic Track!
-                    </h2>
-
-                    <p
-                      style={{
-                        color: '#6c757d',
-                        marginBottom: '10px'
-                      }}
-                    >
-                      Sign in to continue
-                    </p>
+                    <h2 className="fw-bold">Welcome to Civic Track!</h2>
+                    <p className="text-secondary">Sign in to continue</p>
                   </div>
 
                   <Form onSubmit={handleLogin}>
                     <Form.Group className="mb-3">
-                      <Form.Label style={{ fontWeight: '600' }}>
-                        Email Address
-                      </Form.Label>
+                      <Form.Label>Email Address</Form.Label>
 
-                      <div className="d-flex align-items-center">
+                      <div className="d-flex">
                         <span
+                          className="d-flex align-items-center px-3"
                           style={{
-                            padding: '12px',
                             backgroundColor: '#f8faf9',
                             border: '1px solid #ced4da',
                             borderRight: 'none',
@@ -113,10 +123,7 @@ function Login() {
                           type="email"
                           placeholder="Enter your email"
                           value={email}
-                          onChange={(e) => {
-                            setEmail(e.target.value)
-                            setError('')
-                          }}
+                          onChange={(e) => setEmail(e.target.value)}
                           required
                           style={{
                             padding: '12px',
@@ -127,14 +134,12 @@ function Login() {
                     </Form.Group>
 
                     <Form.Group className="mb-3">
-                      <Form.Label style={{ fontWeight: '600' }}>
-                        Password
-                      </Form.Label>
+                      <Form.Label>Password</Form.Label>
 
-                      <div className="d-flex align-items-center">
+                      <div className="d-flex">
                         <span
+                          className="d-flex align-items-center px-3"
                           style={{
-                            padding: '12px',
                             backgroundColor: '#f8faf9',
                             border: '1px solid #ced4da',
                             borderRight: 'none',
@@ -149,26 +154,19 @@ function Login() {
                           type={showPassword ? 'text' : 'password'}
                           placeholder="Enter your password"
                           value={password}
-                          onChange={(e) => {
-                            setPassword(e.target.value)
-                            setError('')
-                          }}
+                          onChange={(e) => setPassword(e.target.value)}
                           required
-                          style={{
-                            padding: '12px',
-                            borderRadius: 0
-                          }}
+                          style={{ padding: '12px', borderRadius: 0 }}
                         />
 
                         <Button
                           type="button"
                           variant="light"
+                          onClick={() => setShowPassword(!showPassword)}
                           aria-label={
                             showPassword ? 'Hide password' : 'Show password'
                           }
-                          onClick={() => setShowPassword(!showPassword)}
                           style={{
-                            padding: '12px',
                             border: '1px solid #ced4da',
                             borderLeft: 'none',
                             borderRadius: '0 8px 8px 0',
@@ -180,45 +178,26 @@ function Login() {
                       </div>
                     </Form.Group>
 
-                    {error && (
-                      <p
-                        role="alert"
-                        style={{
-                          color: '#b42318',
-                          fontSize: '14px',
-                          marginTop: '15px'
-                        }}
-                      >
-                        {error}
-                      </p>
-                    )}
-
                     <Button
                       type="submit"
                       className="w-100 mt-3"
+                      disabled={loading}
                       style={{
                         backgroundColor: '#176B52',
                         border: 'none',
                         padding: '13px',
-                        borderRadius: '8px',
-                        fontWeight: '600'
+                        borderRadius: '8px'
                       }}
                     >
-                      Login
+                      {loading ? 'Logging in...' : 'Login'}
                     </Button>
                   </Form>
+
+                  <p className="text-center mt-4 mb-0">
+                    Don't have an account? <Link to="/register">Register</Link>
+                  </p>
                 </Card.Body>
               </Card>
-
-              <p
-                className="text-center mt-4"
-                style={{
-                  color: '#6c757d',
-                  fontSize: '13px'
-                }}
-              >
-                Civic Track · Building better communities together
-              </p>
             </div>
           </div>
         </Container>

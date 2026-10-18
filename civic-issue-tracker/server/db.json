@@ -1,4 +1,53 @@
 {
-  "users": [],
-  "issues": []
+  "users": [
+    {
+      "name": "Arjun",
+      "email": "arjunkishnanps3@gmail.com",
+      "password": "123456",
+      "role": "admin",
+      "id": 1
+    },
+    {
+      "name": "Amal",
+      "email": "dhwani11@gmail.com",
+      "password": "123456",
+      "role": "user",
+      "id": 2
+    },
+    {
+      "name": "Akku",
+      "email": "arjunkishnanps0@gmail.com",
+      "password": "111111",
+      "role": "user",
+      "id": 3
+    }
+  ],
+  "issues": [
+    {
+      "title": "Road damaged",
+      "description": "Potholes",
+      "category": "Road",
+      "location": "Kochi",
+      "status": "Resolved",
+      "reportedBy": 1,
+      "createdAt": "2026-10-18T05:58:08.926Z",
+      "id": 1,
+      "supporters": [],
+      "adminResponse": "We are working on it"
+    },
+    {
+      "title": "A tree in road",
+      "category": "Road blocked",
+      "location": "Near luminar",
+      "description": "Hard to cross road",
+      "status": "Pending",
+      "reportedBy": 2,
+      "createdAt": "2026-10-18T08:04:54.766Z",
+      "id": 2,
+      "supporters": [
+        2,
+        3
+      ]
+    }
+  ]
 }

@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom'
 import Header from '../Components/Header'
 import Footer from '../Components/Footer'
+import { getLoggedUser } from '../utils/auth'
 
 function Landing() {
   const navigate = useNavigate()
@@ -70,7 +71,9 @@ function Landing() {
 
               <div className="d-flex flex-wrap gap-3 mt-4">
                 <Button
-                  onClick={() => navigate('/login')}
+                  onClick={() =>
+                    navigate(getLoggedUser() ? '/dashboard' : '/login')
+                  }
                   style={{
                     backgroundColor: '#176B52',
                     border: 'none',
