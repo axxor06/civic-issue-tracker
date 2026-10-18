@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { fetchIssues } from '../Redux/slice/issueSlice'
 import { getLoggedUser } from '../utils/auth'
 
+
 function Landing() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
