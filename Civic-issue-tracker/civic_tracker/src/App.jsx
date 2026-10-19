@@ -1,5 +1,4 @@
-import { useEffect } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Header from './Components/Header'
 import Footer from './Components/Footer'
@@ -25,21 +24,9 @@ function AdminRoute({ children }) {
   return children
 }
 
-// go back to the top whenever the page changes
-function ScrollToTop() {
-  const { pathname } = useLocation()
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [pathname])
-
-  return null
-}
-
 function App() {
   return (
     <>
-      <ScrollToTop />
       <Header />
 
       <main className="site-main">
