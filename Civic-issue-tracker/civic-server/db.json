@@ -20,6 +20,13 @@
       "password": "111111",
       "role": "user",
       "id": 3
+    },
+    {
+      "name": "sravan",
+      "email": "kannansravan860@gmail.com",
+      "password": "123456",
+      "role": "user",
+      "id": 4
     }
   ],
   "issues": [

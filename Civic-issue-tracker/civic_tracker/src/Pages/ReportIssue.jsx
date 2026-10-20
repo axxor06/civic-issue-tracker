@@ -49,7 +49,9 @@ function ReportIssue() {
   }
 
   return (
+    
     <section className="page page-narrow">
+      
       <Link to="/dashboard" className="link-quiet back">← Back to issues</Link>
 
       <h1 className="page-title">Report an issue</h1>

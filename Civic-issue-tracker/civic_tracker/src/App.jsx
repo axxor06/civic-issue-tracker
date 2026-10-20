@@ -27,7 +27,7 @@ function AdminRoute({ children }) {
 function App() {
   return (
     <>
-      <Header />
+      <Header/>
 
       <main className="site-main">
         <Routes>
