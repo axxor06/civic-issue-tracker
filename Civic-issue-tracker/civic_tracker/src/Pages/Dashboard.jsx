@@ -1,9 +1,25 @@
+
 import { useEffect, useState } from 'react'
 import { Container, Card, Button, Badge } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { FaHeart, FaMapMarkerAlt, FaTachometerAlt, FaFileAlt, FaUser, FaSignOutAlt } from 'react-icons/fa'
-import { FaRoad, FaLightbulb, FaTrashCan, FaBolt, FaDroplet, FaVolumeHigh, FaEllipsis } from 'react-icons/fa6'
+import {
+  FaHeart,
+  FaMapMarkerAlt,
+  FaTachometerAlt,
+  FaFileAlt,
+  FaUser,
+  FaSignOutAlt
+} from 'react-icons/fa'
+import {
+  FaRoad,
+  FaLightbulb,
+  FaTrashCan,
+  FaBolt,
+  FaDroplet,
+  FaVolumeHigh,
+  FaEllipsis
+} from 'react-icons/fa6'
 import { toast } from 'react-toastify'
 import { fetchIssues } from '../Redux/slice/issueSlice'
 import { deleteIssueAPI, updateIssueAPI } from '../services/allAPI'
@@ -20,12 +36,12 @@ const categories = [
 ]
 
 const categoryNames = {
-  Road: ['road', 'roads'],
-  Streetlight: ['streetlight', 'streetlights', 'street light', 'street lights'],
-  Waste: ['waste', 'waste management'],
+  Road: ['road'],
+  Streetlight: ['streetlight'],
+  Waste: ['waste'],
   Electricity: ['electricity'],
-  Water: ['water', 'water supply', 'water supply & drainage', 'water supply and drainage', 'drainage'],
-  Noise: ['noise', 'noise pollution'],
+  Water: ['water'],
+  Noise: ['noise'],
   Other: ['other']
 }
 
@@ -41,12 +57,71 @@ const sidebarButtonStyle = {
   cursor: 'pointer'
 }
 
+// Display dates in DD/MM/YYYY format
+const formatDate = (date) => {
+  if (!date) return 'Date not available'
+
+  const parsedDate = new Date(date)
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return 'Date not available'
+  }
+
+  return parsedDate.toLocaleDateString('en-GB')
+}
+
+// All status dates to display on the issue card
+const statusDates = [
+  {
+    field: 'underReviewAt',
+    label: 'Under Review on',
+    icon: 'fa-magnifying-glass',
+    background: '#fff3cd',
+    color: '#997404'
+  },
+  {
+    field: 'approvedAt',
+    label: 'Approved on',
+    icon: 'fa-circle-check',
+    background: '#d9fbe5',
+    color: '#198754'
+  },
+  {
+    field: 'assignedAt',
+    label: 'Assigned on',
+    icon: 'fa-user-check',
+    background: '#dbeafe',
+    color: '#2563eb'
+  },
+  {
+    field: 'inProgressAt',
+    label: 'In Progress on',
+    icon: 'fa-spinner',
+    background: '#e0e7ff',
+    color: '#4f46e5'
+  },
+  {
+    field: 'resolvedAt',
+    label: 'Resolved on',
+    icon: 'fa-circle-check',
+    background: '#e4f7e9',
+    color: '#198754'
+  },
+  {
+    field: 'rejectedAt',
+    label: 'Rejected on',
+    icon: 'fa-circle-xmark',
+    background: '#fee2e2',
+    color: '#dc2626'
+  }
+]
+
 function Dashboard() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const loggedUser = getLoggedUser()
 
-  const { allIssues, loading, error } = useSelector(
+  const { allIssues = [], loading, error } = useSelector(
     (state) => state.issueReducer
   )
 
@@ -64,32 +139,51 @@ function Dashboard() {
     navigate('/login', { replace: true })
   }
 
-  // Show all issues or only the selected category
+  // Filter issues by category
   const filteredIssues = allIssues.filter((issue) => {
     if (selectedCategory === 'All Issues') return true
 
     const category = (issue.category || '').toLowerCase().trim()
+
     return categoryNames[selectedCategory]?.includes(category)
   })
 
-  // Add or remove the logged-in user from an issue's supporters
+
+  
+
+  // Add or remove support for an issue
   const handleSupport = async (issue) => {
+    if (!loggedUser?.id) {
+      toast.error('Please log in to support an issue.')
+      return
+    }
+
     if (issue.status === 'Resolved') {
       toast.info('This issue has already been resolved.')
       return
     }
 
-    const supporters = issue.supporters || []
+    const supporters = Array.isArray(issue.supporters)
+      ? issue.supporters
+      : []
+
     const userId = String(loggedUser.id)
-    const alreadySupported = supporters.some((id) => String(id) === userId)
+
+    const alreadySupported = supporters.some(
+      (id) => String(id) === userId
+    )
 
     const updatedSupporters = alreadySupported
       ? supporters.filter((id) => String(id) !== userId)
       : [...supporters, loggedUser.id]
 
     try {
-      await updateIssueAPI(issue.id, { supporters: updatedSupporters })
+      await updateIssueAPI(issue.id, {
+        supporters: updatedSupporters
+      })
+
       dispatch(fetchIssues())
+
       toast.success(
         alreadySupported
           ? 'Support withdrawn successfully!'
@@ -102,7 +196,9 @@ function Dashboard() {
 
   // Delete an issue
   const handleDelete = async (issue) => {
-    if (!window.confirm('Are you sure you want to delete this issue?')) return
+    if (!window.confirm('Are you sure you want to delete this issue?')) {
+      return
+    }
 
     try {
       await deleteIssueAPI(issue.id)
@@ -113,12 +209,12 @@ function Dashboard() {
     }
   }
 
-  // Check if the current user can delete this issue
+  // Check whether the user can delete an issue
   const canDeleteIssue = (issue) =>
     loggedUser?.role === 'admin' ||
     String(issue.reportedBy) === String(loggedUser?.id)
 
-  // Check if the current user already supports this issue
+  // Check whether the user already supports an issue
   const hasSupported = (issue) =>
     (issue.supporters || []).some(
       (id) => String(id) === String(loggedUser?.id)
@@ -127,9 +223,14 @@ function Dashboard() {
   return (
     <div
       className="container-fluid p-0"
-      style={{ height: '100vh', overflow: 'hidden', background: '#f5faf7' }}
+      style={{
+        height: '100vh',
+        overflow: 'hidden',
+        background: '#f5faf7'
+      }}
     >
       <div className="row g-0 h-100">
+
         {/* Sidebar */}
         <aside
           className="col-12 col-lg-2 p-3 p-lg-4"
@@ -145,25 +246,9 @@ function Dashboard() {
             className="d-flex align-items-center gap-3 pb-4 mb-3"
             style={{ borderBottom: '1px solid #46534c' }}
           >
-            <div
-              className="d-flex align-items-center justify-content-center"
-              style={{
-                width: '42px',
-                height: '42px',
-                borderRadius: '10px',
-                background: '#d5f5e3',
-                color: '#123b31',
-                fontSize: '23px',
-                fontWeight: 'bold',
-                flexShrink: 0
-              }}
-            >
-              C
-            </div>
-            <div>
-              <h4 className="mb-0 fw-bold">CivicPulse</h4>
-              <small style={{ color: '#b7c9bf' }}>Community Portal</small>
-            </div>
+         
+
+          
           </div>
 
           <nav className="d-flex flex-row flex-wrap flex-lg-column gap-2">
@@ -171,7 +256,11 @@ function Dashboard() {
               type="button"
               onClick={() => navigate('/dashboard')}
               className="d-flex align-items-center gap-3"
-              style={{ ...sidebarButtonStyle, background: '#176b52', flex: '1 1 auto' }}
+              style={{
+                ...sidebarButtonStyle,
+                background: '#176b52',
+                flex: '1 1 auto'
+              }}
             >
               <FaTachometerAlt size={19} />
               Dashboard
@@ -181,7 +270,10 @@ function Dashboard() {
               type="button"
               onClick={() => navigate('/my-reports')}
               className="d-flex align-items-center gap-3"
-              style={{ ...sidebarButtonStyle, flex: '1 1 auto' }}
+              style={{
+                ...sidebarButtonStyle,
+                flex: '1 1 auto'
+              }}
             >
               <FaFileAlt size={19} />
               My Reports
@@ -191,7 +283,10 @@ function Dashboard() {
               type="button"
               onClick={() => navigate('/profile')}
               className="d-flex align-items-center gap-3"
-              style={{ ...sidebarButtonStyle, flex: '1 1 auto' }}
+              style={{
+                ...sidebarButtonStyle,
+                flex: '1 1 auto'
+              }}
             >
               <FaUser size={19} />
               Profile
@@ -201,19 +296,28 @@ function Dashboard() {
               type="button"
               onClick={handleLogout}
               className="d-flex align-items-center gap-3"
-              style={{ ...sidebarButtonStyle, color: '#ffb4a9', flex: '1 1 auto' }}
+              style={{
+                ...sidebarButtonStyle,
+                color: '#ffb4a9',
+                flex: '1 1 auto'
+              }}
             >
               <FaSignOutAlt size={19} />
               Logout
             </button>
           </nav>
 
-          <div className="mt-5 pt-4" style={{ borderTop: '1px solid #46534c' }}>
-            <small style={{ color: '#b7c9bf' }}>Making communities better</small>
+          <div
+            className="mt-5 pt-4"
+            style={{ borderTop: '1px solid #46534c' }}
+          >
+            <small style={{ color: '#b7c9bf' }}>
+              Making communities better
+            </small>
           </div>
         </aside>
 
-        {/* Main dashboard */}
+        {/* Main Dashboard */}
         <main
           className="col-12 col-lg-10 p-3 p-md-4 p-xl-5"
           style={{
@@ -224,7 +328,8 @@ function Dashboard() {
           }}
         >
           <Container fluid>
-            {/* Community banner */}
+
+            {/* Community Banner */}
             <div
               className="p-4 p-md-5 mb-4 rounded-4"
               style={{
@@ -243,19 +348,35 @@ function Dashboard() {
                 CIVICPULSE COMMUNITY
               </span>
 
-              <h2 className="fw-bold mb-3">Your Community. Your Voice.</h2>
-              <p className="mb-4" style={{ color: '#d3e7dc', lineHeight: '1.8' }}>
-                See a problem? Be the reason it gets noticed. Report local issues,
-                support community complaints, and follow their progress toward resolution.
+              <h2 className="fw-bold mb-3">
+                Your Community. Your Voice.
+              </h2>
+
+              <p
+                className="mb-4"
+                style={{ color: '#d3e7dc', lineHeight: '1.8' }}
+              >
+                See a problem? Be the reason it gets noticed. Report local
+                issues, support community complaints, and follow their
+                progress toward resolution.
               </p>
 
               <div
                 className="d-flex align-items-center gap-3 p-3 rounded-3 mb-4"
-                style={{ backgroundColor: 'rgba(255,255,255,0.10)', maxWidth: '500px' }}
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.10)',
+                  maxWidth: '500px'
+                }}
               >
-                <i className="fa-solid fa-location-dot fs-3" style={{ color: '#72dfa5' }} />
+                <i
+                  className="fa-solid fa-location-dot fs-3"
+                  style={{ color: '#72dfa5' }}
+                />
+
                 <div>
-                  <h6 className="fw-bold mb-1">Make an impact locally</h6>
+                  <h6 className="fw-bold mb-1">
+                    Make an impact locally
+                  </h6>
                   <small style={{ color: '#d3e7dc' }}>
                     Roads · Waste · Water · Electricity · Noise · Streetlights
                   </small>
@@ -273,15 +394,18 @@ function Dashboard() {
               </Button>
             </div>
 
-            {/* Issues heading */}
+            {/* Issues Heading */}
             <h4
               className="fw-bold mb-3 text-center pt-3"
-              style={{ color: '#18352b', fontSize: 'clamp(1.5rem, 3vw, 2.2rem)' }}
+              style={{
+                color: '#18352b',
+                fontSize: 'clamp(1.5rem, 3vw, 2.2rem)'
+              }}
             >
               Reported Community Issues
             </h4>
 
-            {/* Category filters */}
+            {/* Category Filters */}
             <div className="mb-4 pt-3">
               <div className="mb-4 text-center">
                 <button
@@ -296,10 +420,14 @@ function Dashboard() {
                     padding: '20px',
                     background: '#123b31',
                     color: '#ffffff',
-                    boxShadow: selectedCategory === 'All Issues'
-                      ? '0 8px 22px rgba(18, 59, 49, 0.25)'
-                      : '0 4px 12px rgba(18, 59, 49, 0.12)',
-                    outline: selectedCategory === 'All Issues' ? '2px solid #a7e8c3' : 'none',
+                    boxShadow:
+                      selectedCategory === 'All Issues'
+                        ? '0 8px 22px rgba(18, 59, 49, 0.25)'
+                        : '0 4px 12px rgba(18, 59, 49, 0.12)',
+                    outline:
+                      selectedCategory === 'All Issues'
+                        ? '2px solid #a7e8c3'
+                        : 'none',
                     outlineOffset: '3px',
                     cursor: 'pointer'
                   }}
@@ -319,18 +447,31 @@ function Dashboard() {
                     >
                       <i className="fa-solid fa-layer-group" />
                     </div>
+
                     <div className="flex-grow-1">
                       <h5 className="fw-bold mb-1">All Issues</h5>
-                      <small style={{ color: '#c6e5d5' }}>Community issue overview</small>
+                      <small style={{ color: '#c6e5d5' }}>
+                        Community issue overview
+                      </small>
                     </div>
-                    <i className="fa-solid fa-circle-arrow-right" style={{ fontSize: '28px', color: '#a7e8c3' }} />
+
+                    <i
+                      className="fa-solid fa-circle-arrow-right"
+                      style={{
+                        fontSize: '28px',
+                        color: '#a7e8c3'
+                      }}
+                    />
                   </div>
 
                   <div
                     className="d-flex justify-content-between align-items-center mt-3 pt-3"
                     style={{ borderTop: '1px solid #477064' }}
                   >
-                    <small style={{ color: '#d5f5e3' }}>View all reported complaints</small>
+                    <small style={{ color: '#d5f5e3' }}>
+                      View all reported complaints
+                    </small>
+
                     <span
                       className="badge rounded-pill px-3 py-2"
                       style={{
@@ -362,7 +503,9 @@ function Dashboard() {
                       onClick={() => setSelectedCategory(category.name)}
                       className="d-flex align-items-center gap-3 text-start"
                       style={{
-                        border: isActive ? '2px solid #198754' : '1px solid #e5e7eb',
+                        border: isActive
+                          ? '2px solid #198754'
+                          : '1px solid #e5e7eb',
                         borderRadius: '14px',
                         padding: '13px 17px',
                         background: isActive ? '#eaf6ee' : '#ffffff',
@@ -381,18 +524,35 @@ function Dashboard() {
                           height: '42px',
                           flexShrink: 0,
                           borderRadius: '12px',
-                          background: isActive ? '#198754' : `${category.color}18`,
+                          background: isActive
+                            ? '#198754'
+                            : `${category.color}18`,
                           color: isActive ? '#ffffff' : category.color,
                           fontSize: '17px'
                         }}
                       >
                         <Icon size={19} />
                       </span>
+
                       <span>
-                        <span className="d-block" style={{ fontSize: '13px', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                        <span
+                          className="d-block"
+                          style={{
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
                           {category.name}
                         </span>
-                        <span className="d-block mt-1" style={{ fontSize: '11px', color: isActive ? '#198754' : '#9ca3af' }}>
+
+                        <span
+                          className="d-block mt-1"
+                          style={{
+                            fontSize: '11px',
+                            color: isActive ? '#198754' : '#9ca3af'
+                          }}
+                        >
                           {isActive ? 'Selected' : 'View category'}
                         </span>
                       </span>
@@ -402,23 +562,35 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Selected category and count */}
+            {/* Selected Category and Count */}
             <h5 className="fw-semibold mb-3" style={{ color: '#475467' }}>
-              {selectedCategory === 'All Issues' ? 'All Reported Issues' : `${selectedCategory} Issues`}
-              <span className="text-secondary ms-2">({filteredIssues.length})</span>
+              {selectedCategory === 'All Issues'
+                ? 'All Reported Issues'
+                : `${selectedCategory} Issues`}
+
+              <span className="text-secondary ms-2">
+                ({filteredIssues.length})
+              </span>
             </h5>
 
-            {/* Loading, error and empty messages */}
+            {/* Loading, Error and Empty Messages */}
             {loading && allIssues.length === 0 ? (
-              <p className="text-secondary">Loading community issues...</p>
+              <p className="text-secondary">
+                Loading community issues...
+              </p>
             ) : error ? (
               <p className="text-danger">{error}</p>
             ) : allIssues.length === 0 ? (
               <Card className="border-0 shadow-sm text-center p-5">
                 <Card.Body>
                   <h5>No community issues yet</h5>
-                  <p className="text-secondary mb-3">Be the first to report a community issue.</p>
-                  <Button variant="success" onClick={() => navigate('/report-issue')}>
+                  <p className="text-secondary mb-3">
+                    Be the first to report a community issue.
+                  </p>
+                  <Button
+                    variant="success"
+                    onClick={() => navigate('/report-issue')}
+                  >
                     Report New Issue
                   </Button>
                 </Card.Body>
@@ -426,10 +598,20 @@ function Dashboard() {
             ) : filteredIssues.length === 0 ? (
               <Card className="border-0 shadow-sm text-center p-5">
                 <Card.Body>
-                  <i className="fa-solid fa-folder-open mb-3" style={{ fontSize: '35px', color: '#176b52' }} />
-                  <h5 className="fw-bold">No {selectedCategory} issues found</h5>
-                  <p className="text-secondary mb-3">There are no reported issues in this category yet.</p>
-                  <Button variant="outline-success" onClick={() => setSelectedCategory('All Issues')}>
+                  <i
+                    className="fa-solid fa-folder-open mb-3"
+                    style={{ fontSize: '35px', color: '#176b52' }}
+                  />
+                  <h5 className="fw-bold">
+                    No {selectedCategory} issues found
+                  </h5>
+                  <p className="text-secondary mb-3">
+                    There are no reported issues in this category yet.
+                  </p>
+                  <Button
+                    variant="outline-success"
+                    onClick={() => setSelectedCategory('All Issues')}
+                  >
                     View All Issues
                   </Button>
                 </Card.Body>
@@ -450,7 +632,8 @@ function Dashboard() {
                       }}
                     >
                       <Card.Body className="p-4">
-                        {/* Priority and status */}
+
+                        {/* Priority and Status */}
                         <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                           <span
                             className="badge rounded-pill"
@@ -466,8 +649,27 @@ function Dashboard() {
                           </span>
 
                           <Badge
-                            bg={issue.status === 'Resolved' ? 'success' : issue.status === 'In Progress' ? 'primary' : 'warning'}
-                            text={issue.status === 'Pending' || !issue.status ? 'dark' : undefined}
+                            bg={
+                              issue.status === 'Resolved'
+                                ? 'success'
+                                : issue.status === 'In Progress'
+                                  ? 'primary'
+                                  : issue.status === 'Rejected'
+                                    ? 'danger'
+                                    : issue.status === 'Approved'
+                                      ? 'success'
+                                      : issue.status === 'Assigned'
+                                        ? 'info'
+                                        : 'warning'
+                            }
+                            text={
+                              [
+                                'Pending',
+                                'Under Review'
+                              ].includes(issue.status) || !issue.status
+                                ? 'dark'
+                                : undefined
+                            }
                             pill
                             className="px-3 py-2"
                           >
@@ -475,32 +677,55 @@ function Dashboard() {
                           </Badge>
                         </div>
 
-                        <h5 className="fw-bold mb-3" style={{ color: '#18352b', lineHeight: '1.5' }}>
+                        <h5
+                          className="fw-bold mb-3"
+                          style={{
+                            color: '#18352b',
+                            lineHeight: '1.5'
+                          }}
+                        >
                           {issue.title}
                         </h5>
 
-                        {/* Category and location */}
+                        {/* Category and Location */}
                         <div className="d-flex align-items-center flex-wrap gap-2 mb-3">
                           <span
                             className="badge rounded-pill"
-                            style={{ backgroundColor: '#d9efe2', color: '#176b52', padding: '7px 12px' }}
+                            style={{
+                              backgroundColor: '#d9efe2',
+                              color: '#176b52',
+                              padding: '7px 12px'
+                            }}
                           >
                             {issue.category || 'General Issue'}
                           </span>
+
                           <span className="text-secondary small">
-                            <FaMapMarkerAlt className="me-2" color="#198754" />
+                            <FaMapMarkerAlt
+                              className="me-2"
+                              color="#198754"
+                            />
                             {issue.location || 'Location not specified'}
                           </span>
                         </div>
 
-                        <p className="mb-4" style={{ color: '#475467', lineHeight: '1.8' }}>
+                        <p
+                          className="mb-4"
+                          style={{
+                            color: '#475467',
+                            lineHeight: '1.8'
+                          }}
+                        >
                           {issue.description}
                         </p>
 
-                        {/* Supporter information */}
+                        {/* Supporter Information */}
                         <div
                           className="d-flex align-items-center flex-wrap p-3 mb-4"
-                          style={{ backgroundColor: '#f0f8f4', borderRadius: '12px' }}
+                          style={{
+                            backgroundColor: '#f0f8f4',
+                            borderRadius: '12px'
+                          }}
                         >
                           <div className="d-flex align-items-center gap-3 flex-grow-1 p-2">
                             <div
@@ -515,11 +740,17 @@ function Dashboard() {
                             >
                               <FaHeart color="#176b52" size={21} />
                             </div>
+
                             <div>
-                              <h6 className="fw-bold mb-1" style={{ color: '#18352b' }}>
+                              <h6
+                                className="fw-bold mb-1"
+                                style={{ color: '#18352b' }}
+                              >
                                 {issue.supporters?.length || 0} supporters
                               </h6>
-                              <small className="text-secondary">Community voices matter</small>
+                              <small className="text-secondary">
+                                Community voices matter
+                              </small>
                             </div>
                           </div>
 
@@ -537,10 +768,20 @@ function Dashboard() {
                                 flexShrink: 0
                               }}
                             >
-                              <i className="fa-solid fa-users" style={{ color: '#176b52', fontSize: '20px' }} />
+                              <i
+                                className="fa-solid fa-users"
+                                style={{
+                                  color: '#176b52',
+                                  fontSize: '20px'
+                                }}
+                              />
                             </div>
+
                             <div>
-                              <h6 className="fw-bold mb-1" style={{ color: '#18352b' }}>
+                              <h6
+                                className="fw-bold mb-1"
+                                style={{ color: '#18352b' }}
+                              >
                                 Priority {index + 1}
                               </h6>
                               <small className="text-secondary">
@@ -550,12 +791,14 @@ function Dashboard() {
                           </div>
                         </div>
 
-                        {/* Dates and actions */}
+                        {/* Reported Date, Status Dates and Actions */}
                         <div
                           className="d-flex justify-content-between align-items-center flex-wrap gap-3 pt-3"
                           style={{ borderTop: '1px solid #e5ebe7' }}
                         >
                           <div className="d-flex flex-wrap align-items-center gap-4">
+
+                            {/* Reported Date */}
                             <div className="d-flex align-items-center gap-2">
                               <div
                                 className="d-flex align-items-center justify-content-center"
@@ -567,49 +810,78 @@ function Dashboard() {
                                   flexShrink: 0
                                 }}
                               >
-                                <i className="fa-regular fa-calendar" style={{ color: '#176b52', fontSize: '18px' }} />
+                                <i
+                                  className="fa-regular fa-calendar"
+                                  style={{
+                                    color: '#176b52',
+                                    fontSize: '18px'
+                                  }}
+                                />
                               </div>
+
                               <div>
-                                <small className="text-secondary d-block">Reported on</small>
+                                <small className="text-secondary d-block">
+                                  Reported on
+                                </small>
                                 <span className="fw-semibold small">
-                                  {issue.createdAt ? new Date(issue.createdAt).toLocaleDateString() : 'Date not available'}
+                                  {formatDate(issue.createdAt)}
                                 </span>
                               </div>
                             </div>
 
-                            {issue.status === 'Resolved' && (
-                              <div className="d-flex align-items-center gap-2">
+                            {/* Other Status Dates */}
+                            {statusDates.map((dateInfo) =>
+                              issue[dateInfo.field] ? (
                                 <div
-                                  className="d-flex align-items-center justify-content-center"
-                                  style={{
-                                    backgroundColor: '#e4f7e9',
-                                    width: '40px',
-                                    height: '40px',
-                                    borderRadius: '12px',
-                                    flexShrink: 0
-                                  }}
+                                  key={dateInfo.field}
+                                  className="d-flex align-items-center gap-2"
                                 >
-                                  <i className="fa-solid fa-circle-check" style={{ color: '#198754', fontSize: '18px' }} />
+                                  <div
+                                    className="d-flex align-items-center justify-content-center"
+                                    style={{
+                                      backgroundColor: dateInfo.background,
+                                      width: '40px',
+                                      height: '40px',
+                                      borderRadius: '12px',
+                                      flexShrink: 0
+                                    }}
+                                  >
+                                    <i
+                                      className={`fa-solid ${dateInfo.icon}`}
+                                      style={{
+                                        color: dateInfo.color,
+                                        fontSize: '18px'
+                                      }}
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <small className="text-secondary d-block">
+                                      {dateInfo.label}
+                                    </small>
+                                    <span className="fw-semibold small">
+                                      {formatDate(issue[dateInfo.field])}
+                                    </span>
+                                  </div>
                                 </div>
-                                <div>
-                                  <small className="text-secondary d-block">Resolved on</small>
-                                  <span className="fw-semibold small">
-                                    {issue.resolvedAt ? new Date(issue.resolvedAt).toLocaleDateString() : 'Resolution date not available'}
-                                  </span>
-                                </div>
-                              </div>
+                              ) : null
                             )}
                           </div>
 
-                          {/* Action buttons */}
+                          {/* Action Buttons */}
                           <div className="d-flex gap-2 flex-wrap">
                             <Button
                               onClick={() => handleSupport(issue)}
                               disabled={issue.status === 'Resolved'}
-                              variant={alreadySupported ? 'outline-success' : 'success'}
+                              variant={
+                                alreadySupported
+                                  ? 'outline-success'
+                                  : 'success'
+                              }
                               style={{ borderRadius: '9px' }}
                             >
                               <FaHeart className="me-2" />
+
                               {issue.status === 'Resolved'
                                 ? 'Issue Resolved'
                                 : alreadySupported

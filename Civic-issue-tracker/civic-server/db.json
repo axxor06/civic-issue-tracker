@@ -57,26 +57,28 @@
       "category": "Waste",
       "location": "changaramkulam junction",
       "description": "hhgdf.sljf",
-      "status": "Pending",
+      "status": "Approved",
       "supporters": [
         5
       ],
       "reportedBy": 4,
       "createdAt": "2026-10-19T16:11:27.681Z",
-      "id": 3
+      "id": 3,
+      "approvedAt": "2026-10-20T07:28:31.068Z"
     },
     {
       "title": "iiuhdqjow",
       "category": "Streetlight",
       "location": "fhLKSD",
       "description": ",jvb.sflk",
-      "status": "Pending",
+      "status": "In Progress",
       "supporters": [
         4
       ],
       "reportedBy": 4,
       "createdAt": "2026-10-19T16:12:02.617Z",
-      "id": 4
+      "id": 4,
+      "inProgressAt": "2026-10-20T07:15:52.675Z"
     },
     {
       "title": "dgk,sjd",
@@ -88,6 +90,17 @@
       "reportedBy": 4,
       "createdAt": "2026-10-19T16:13:59.828Z",
       "id": 5
+    },
+    {
+      "title": "jhflkd",
+      "category": "other",
+      "location": "s,kgslfjl",
+      "description": "gkkah;fj",
+      "status": "Pending",
+      "supporters": [],
+      "reportedBy": 4,
+      "createdAt": "2026-10-20T07:34:03.478Z",
+      "id": 6
     }
   ]
 }
