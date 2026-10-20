@@ -21,14 +21,7 @@
       "role": "user",
       "id": 3
     },
-    {
-<<<<<<< HEAD
-      "name": "sravan",
-      "email": "kannansravan860@gmail.com",
-      "password": "123456",
-      "role": "user",
-      "id": 4
-=======
+   {
       "name": "Sreelakshmi",
       "email": "sree@gmail.com",
       "password": "sree123",
@@ -41,7 +34,6 @@
       "password": "john123",
       "role": "user",
       "id": 5
->>>>>>> fed0ce936f28587dd9942dcd3ce35903e7b95af8
     }
   ],
   "issues": [
