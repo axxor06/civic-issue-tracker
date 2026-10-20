@@ -1,0 +1,186 @@
+{
+  "users": [
+    {
+      "name": "Arjun",
+      "email": "arjunkishnanps3@gmail.com",
+      "password": "123456",
+      "role": "admin",
+      "id": 1,
+      "status": "Active",
+      "phone": "+91 98765 00000",
+      "location": "Kerala, India"
+    },
+    {
+      "name": "Amal",
+      "email": "dhwani11@gmail.com",
+      "password": "123456",
+      "role": "user",
+      "id": 2,
+      "status": "Active"
+    },
+    {
+      "name": "Akku",
+      "email": "arjunkishnanps0@gmail.com",
+      "password": "111111",
+      "role": "user",
+      "id": 3,
+      "status": "Active"
+    },
+    {
+      "name": "Sreelakshmi",
+      "email": "sree@gmail.com",
+      "password": "sree123",
+      "role": "user",
+      "id": 4,
+      "status": "Active"
+    },
+    {
+      "name": "John",
+      "email": "john@gmail.com",
+      "password": "john123",
+      "role": "user",
+      "id": 5,
+      "status": "Active"
+    },
+    {
+      "name": "Arun",
+      "email": "arun123@gmail.com",
+      "password": "123456",
+      "role": "user",
+      "id": 6,
+      "status": "Active"
+    },
+    {
+      "name": "Sandra Menon",
+      "email": "ponnu123@gmail.com",
+      "password": "ponnu123",
+      "role": "user",
+      "id": 7
+    }
+  ],
+  "issues": [
+    {
+      "title": "A tree in road",
+      "category": "Road",
+      "location": "Near luminar",
+      "description": "Hard to cross road",
+      "status": "Approved",
+      "reportedBy": 2,
+      "createdAt": "2026-10-18T08:04:54.766Z",
+      "id": 2,
+      "supporters": [
+        2,
+        3
+      ],
+      "resolvedAt": "2026-10-19T16:04:18.118Z",
+      "adminNote": ""
+    },
+    {
+      "title": "Waste",
+      "category": "Waste",
+      "location": "changaramkulam junction",
+      "description": "hhgdf.sljf",
+      "status": "Resolved",
+      "supporters": [
+        5,
+        6
+      ],
+      "reportedBy": 4,
+      "createdAt": "2026-10-19T16:11:27.681Z",
+      "id": 3,
+      "approvedAt": "2026-10-20T07:28:31.068Z",
+      "adminNote": ""
+    },
+    {
+      "title": "iiuhdqjow",
+      "category": "Streetlight",
+      "location": "fhLKSD",
+      "description": ",jvb.sflk",
+      "status": "Rejected",
+      "supporters": [
+        4,
+        6
+      ],
+      "reportedBy": 4,
+      "createdAt": "2026-10-19T16:12:02.617Z",
+      "id": 4,
+      "inProgressAt": "2026-10-20T07:15:52.675Z",
+      "adminNote": ""
+    },
+    {
+      "title": "dgk,sjd",
+      "category": "other",
+      "location": "kkdh.ask",
+      "description": "aajjsgdls",
+      "status": "Resolved",
+      "supporters": [
+        1
+      ],
+      "reportedBy": 4,
+      "createdAt": "2026-10-19T16:13:59.828Z",
+      "id": 5,
+      "adminNote": ""
+    },
+    {
+      "title": "jhflkd",
+      "category": "other",
+      "location": "s,kgslfjl",
+      "description": "gkkah;fj",
+      "status": "Approved",
+      "supporters": [],
+      "reportedBy": 4,
+      "createdAt": "2026-10-20T07:34:03.478Z",
+      "id": 6,
+      "adminNote": "resolved successfully"
+    },
+    {
+      "title": "Waste water flowing",
+      "category": "Drainage",
+      "location": "near technopark phase 2 trivandrum",
+      "description": "zxcvbnm,jhgfdsaertyuiop",
+      "status": "Rejected",
+      "supporters": [],
+      "reportedBy": 1,
+      "createdAt": "2026-10-20T11:58:16.041Z",
+      "id": 7,
+      "adminNote": ""
+    },
+    {
+      "title": "Streetlight shut down near a public road",
+      "category": "Streetlight",
+      "location": "near technopark phase 2 trivandrum",
+      "description": "For a month the streetlight is kept shut down in the road creating a dark environment in the surrounding environment .please take this issue seriously and take actions as it is a public matter",
+      "status": "Resolved",
+      "supporters": [
+        7
+      ],
+      "reportedBy": 7,
+      "createdAt": "2026-10-20T18:24:09.532Z",
+      "id": 8,
+      "adminNote": ""
+    },
+    {
+      "title": "sdfghjk",
+      "category": "Noise",
+      "location": "cvbnm,",
+      "description": "fghjkl",
+      "status": "Pending",
+      "supporters": [],
+      "reportedBy": 7,
+      "createdAt": "2026-10-20T19:53:57.478Z",
+      "id": 9
+    },
+    {
+      "title": "sdfghjk",
+      "category": "Water",
+      "location": "nbvcxz",
+      "description": "ertyuio",
+      "status": "Assigned",
+      "supporters": [],
+      "reportedBy": 7,
+      "createdAt": "2026-10-20T20:03:49.580Z",
+      "id": 10,
+      "adminNote": ""
+    }
+  ]
+}
