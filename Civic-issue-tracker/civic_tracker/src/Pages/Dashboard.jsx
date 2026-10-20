@@ -3,23 +3,8 @@ import { useEffect, useState } from 'react'
 import { Container, Card, Button, Badge } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import {
-  FaHeart,
-  FaMapMarkerAlt,
-  FaTachometerAlt,
-  FaFileAlt,
-  FaUser,
-  FaSignOutAlt
-} from 'react-icons/fa'
-import {
-  FaRoad,
-  FaLightbulb,
-  FaTrashCan,
-  FaBolt,
-  FaDroplet,
-  FaVolumeHigh,
-  FaEllipsis
-} from 'react-icons/fa6'
+import { FaHeart,FaMapMarkerAlt,FaTachometerAlt,FaFileAlt,FaUser,FaSignOutAlt} from 'react-icons/fa'
+import {FaRoad,FaLightbulb,FaTrashCan,FaBolt,FaDroplet,FaVolumeHigh,FaEllipsis} from 'react-icons/fa6'
 import { toast } from 'react-toastify'
 import { fetchIssues } from '../Redux/slice/issueSlice'
 import { deleteIssueAPI, updateIssueAPI } from '../services/allAPI'
