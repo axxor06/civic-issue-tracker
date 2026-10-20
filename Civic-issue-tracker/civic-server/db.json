@@ -22,39 +22,93 @@
       "id": 3
     },
     {
+<<<<<<< HEAD
       "name": "sravan",
       "email": "kannansravan860@gmail.com",
       "password": "123456",
       "role": "user",
       "id": 4
+=======
+      "name": "Sreelakshmi",
+      "email": "sree@gmail.com",
+      "password": "sree123",
+      "role": "user",
+      "id": 4
+    },
+    {
+      "name": "John",
+      "email": "john@gmail.com",
+      "password": "john123",
+      "role": "user",
+      "id": 5
+>>>>>>> fed0ce936f28587dd9942dcd3ce35903e7b95af8
     }
   ],
   "issues": [
     {
-      "title": "Road damaged",
-      "description": "Potholes",
-      "category": "Road",
-      "location": "Kochi",
-      "status": "Resolved",
-      "reportedBy": 1,
-      "createdAt": "2026-10-18T05:58:08.926Z",
-      "id": 1,
-      "supporters": [],
-      "adminResponse": "We are working on it"
-    },
-    {
       "title": "A tree in road",
-      "category": "Road blocked",
+      "category": "Road",
       "location": "Near luminar",
       "description": "Hard to cross road",
-      "status": "Pending",
+      "status": "Resolved",
       "reportedBy": 2,
       "createdAt": "2026-10-18T08:04:54.766Z",
       "id": 2,
       "supporters": [
         2,
         3
-      ]
+      ],
+      "resolvedAt": "2026-10-19T16:04:18.118Z"
+    },
+    {
+      "title": "Waste",
+      "category": "Waste",
+      "location": "changaramkulam junction",
+      "description": "hhgdf.sljf",
+      "status": "Approved",
+      "supporters": [
+        5
+      ],
+      "reportedBy": 4,
+      "createdAt": "2026-10-19T16:11:27.681Z",
+      "id": 3,
+      "approvedAt": "2026-10-20T07:28:31.068Z"
+    },
+    {
+      "title": "iiuhdqjow",
+      "category": "Streetlight",
+      "location": "fhLKSD",
+      "description": ",jvb.sflk",
+      "status": "In Progress",
+      "supporters": [
+        4
+      ],
+      "reportedBy": 4,
+      "createdAt": "2026-10-19T16:12:02.617Z",
+      "id": 4,
+      "inProgressAt": "2026-10-20T07:15:52.675Z"
+    },
+    {
+      "title": "dgk,sjd",
+      "category": "other",
+      "location": "kkdh.ask",
+      "description": "aajjsgdls",
+      "status": "Pending",
+      "supporters": [],
+      "reportedBy": 4,
+      "createdAt": "2026-10-19T16:13:59.828Z",
+      "id": 5
+    },
+    {
+      "title": "jhflkd",
+      "category": "other",
+      "location": "s,kgslfjl",
+      "description": "gkkah;fj",
+      "status": "Pending",
+      "supporters": [],
+      "reportedBy": 4,
+      "createdAt": "2026-10-20T07:34:03.478Z",
+      "id": 6
     }
   ]
 }
