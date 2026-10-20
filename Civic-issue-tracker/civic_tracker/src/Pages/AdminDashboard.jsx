@@ -21,16 +21,26 @@ function AdminDashboard() {
     dispatch(fetchIssues())
   }, [dispatch])
 
-  const handleStatusChange = async (issue, status) => {
-    try {
-      await updateIssueAPI(issue.id, { status })
-      dispatch(fetchIssues())
-      toast.success('Issue status updated successfully!')
-    } catch {
-      toast.error('Failed to update issue status!')
+  // UPDATE ISSUE STATUS AND SAVE RESOLUTION DATE
+const handleStatusChange = async (issue, status) => {
+  try {
+    const updateData = {
+      status,
+      ...(status === 'Resolved' && !issue.resolvedAt
+        ? { resolvedAt: new Date().toISOString() }
+        : {})
     }
-  }
 
+    await updateIssueAPI(issue.id, updateData)
+    dispatch(fetchIssues())
+    toast.success('Issue status updated successfully!')
+  } catch (error) {
+    console.error(error)
+    toast.error('Failed to update issue status!')
+  }
+}
+
+  // SAVE OFFICIAL ADMIN RESPONSE
   const handleResponseSave = async (issue) => {
     const adminResponse = (
       responses[issue.id] !== undefined
@@ -45,8 +55,11 @@ function AdminDashboard() {
 
     try {
       setSavingIssue(issue.id)
+
       await updateIssueAPI(issue.id, { adminResponse })
+
       dispatch(fetchIssues())
+
       toast.success('Official response saved successfully!')
     } catch {
       toast.error('Failed to save official response!')
@@ -55,11 +68,14 @@ function AdminDashboard() {
     }
   }
 
+  // DELETE ISSUE
   const handleDelete = async (issue) => {
     if (window.confirm('Are you sure you want to delete this issue?')) {
       try {
         await deleteIssueAPI(issue.id)
+
         dispatch(fetchIssues())
+
         toast.success('Issue deleted successfully!')
       } catch {
         toast.error('Failed to delete the issue!')
@@ -92,7 +108,10 @@ function AdminDashboard() {
             </p>
           </div>
 
-          <Button onClick={() => navigate('/dashboard')} variant="outline-success">
+          <Button
+            onClick={() => navigate('/dashboard')}
+            variant="outline-success"
+          >
             View Community Dashboard
           </Button>
         </div>
@@ -184,13 +203,29 @@ function AdminDashboard() {
                     <p>{issue.description}</p>
 
                     <p className="mb-2">
-                      <strong>Location:</strong> {issue.location || 'Not specified'}
+                      <strong>Location:</strong>{' '}
+                      {issue.location || 'Not specified'}
                     </p>
 
                     <p className="text-secondary">
                       <FaHeart className="me-2" color="#176B52" />
                       {issue.supporters?.length || 0} supporters
                     </p>
+
+                    {issue.status === 'Resolved' && (
+                      <div className="mb-3">
+                        <p className="text-success fw-semibold mb-1">
+                          <FaCheckCircle className="me-2" />
+                          Resolved on
+                        </p>
+
+                        <p className="text-secondary mb-0">
+                          {issue.resolvedAt
+                            ? new Date(issue.resolvedAt).toLocaleString()
+                            : 'Resolution date not available'}
+                        </p>
+                      </div>
+                    )}
 
                     <Form.Group className="mb-3">
                       <Form.Label className="fw-semibold">
@@ -199,7 +234,9 @@ function AdminDashboard() {
 
                       <Form.Select
                         value={issue.status || 'Pending'}
-                        onChange={(e) => handleStatusChange(issue, e.target.value)}
+                        onChange={(e) =>
+                          handleStatusChange(issue, e.target.value)
+                        }
                       >
                         <option value="Pending">Pending</option>
                         <option value="In Progress">In Progress</option>
@@ -234,7 +271,10 @@ function AdminDashboard() {
                       <Button
                         onClick={() => handleResponseSave(issue)}
                         disabled={savingIssue === issue.id}
-                        style={{ backgroundColor: '#176B52', border: 'none' }}
+                        style={{
+                          backgroundColor: '#176B52',
+                          border: 'none'
+                        }}
                       >
                         {savingIssue === issue.id
                           ? 'Saving...'

@@ -12,6 +12,8 @@ import {
 } from 'react-icons/fa'
 import { getLoggedUser } from '../utils/auth'
 
+
+
 function Landing() {
   const navigate = useNavigate()
   const loggedUser = getLoggedUser()
@@ -40,6 +42,8 @@ function Landing() {
   return (
     <main style={{ color: '#24352e', overflow: 'hidden' }}>
       {/* Hero Section */}
+       
+
       <section
         style={{
           background:
@@ -86,7 +90,7 @@ function Landing() {
                   maxWidth: '550px'
                 }}
               >
-                Spot a problem? Speak up. CivicTrack helps communities report
+                Spot a problem? Speak up. Civic-Tracker helps communities report
                 local issues, support shared concerns, and follow progress
                 towards a better place to live.
               </p>
@@ -119,7 +123,7 @@ function Landing() {
                       fontWeight: '600'
                     }}
                   >
-                    Join CivicTrack
+                    Join Civic-Tracker
                   </Button>
                 )}
               </div>
@@ -172,7 +176,7 @@ function Landing() {
 
                   <div>
                     <h5 className="mb-1" style={{ fontWeight: '700' }}>
-                      CivicTrack
+                      Civic-Tracker
                     </h5>
                     <p className="text-secondary mb-0" style={{ fontSize: '13px' }}>
                       Your community dashboard
@@ -384,7 +388,7 @@ function Landing() {
                 letterSpacing: '-1px'
               }}
             >
-              About CivicTrack
+              About Civic-Tracker
             </h2>
 
             <p
@@ -395,7 +399,7 @@ function Landing() {
                 maxWidth: '690px'
               }}
             >
-              CivicTrack is a community-focused platform that gives people a
+              Civic-Tracker is a community-focused platform that gives people a
               shared space to report neighbourhood issues and show support for
               the problems that matter most. By making local concerns easier
               to discover and follow, we aim to encourage participation,

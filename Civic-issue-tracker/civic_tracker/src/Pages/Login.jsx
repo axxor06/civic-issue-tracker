@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FaEye, FaEyeSlash } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { getAllUsersAPI } from '../services/allAPI'
 import { saveLoggedUser } from '../utils/auth'
+import { Container, Form, Button, Card } from 'react-bootstrap'
+
 
 function Login() {
   const navigate = useNavigate()
@@ -42,51 +43,114 @@ function Login() {
   }
 
   return (
-    <section className="page page-narrow">
-      <h1 className="page-title">Log in</h1>
-      <p className="page-sub">Good to see you again.</p>
+    <>
+    
 
-      <form onSubmit={handleLogin} className="form">
-        <div className="field">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+      <main
+  style={{
+    backgroundImage: `linear-gradient(
+      rgba(0, 0, 0, 0.35),
+      rgba(0, 0, 0, 0.35)
+    ), url('https://static.vecteezy.com/system/resources/thumbnails/071/597/922/small_2x/a-silhouette-of-a-large-crowd-of-people-protesting-with-raised-signs-and-fists-against-a-dramatic-orange-sky-photo.jpg')`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    minHeight: '85vh',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '100px '
+  }}
+>
+        <Container>
+          <div className="row justify-content-center">
+            <div className="col-12 col-sm-10 col-md-7 col-lg-5">
+              <Card
+                style={{
+                  border: '1px solid #e4eee8',
+                  borderRadius: '20px',
+                  padding: '10px',
+                  boxShadow: '0 12px 35px rgba(23,107,82,0.09)',
+                  marginBottom:'30px'
+                }}
+              >
+                <Card.Body>
+                  <div className="text-center mb-1 ">
+                  <img width={'90px'} height={'90px'} src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfBxkIlIxwNyveMs8LN3oY4eEzKX6rMeSFpCZSuM3kk9MfHZZbegMZ68g&s=10" alt="logo" />
 
-        <div className="field">
-          <label htmlFor="password">Password</label>
-          <div className="input-with-btn">
-            <input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
+                    <h3 className="fw-bold">Welcome to Civic-Tracker</h3>
+                    <p className="text-secondary">Sign in to continue</p>
+                  </div>
+
+                  <Form onSubmit={handleLogin}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Email Address</Form.Label>
+
+                      <div className="d-flex">
+                     
+
+                        <Form.Control
+                          type="email"
+                          placeholder="Enter your email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          style={{
+                            padding: '12px',
+                            borderRadius: ' 8px 8px '
+                          }}
+                        />
+                      </div>
+                    </Form.Group>
+
+                    <Form.Group className="mb-3">
+                      <Form.Label>Password</Form.Label>
+
+                      <div className="d-flex">
+                     
+
+                        <Form.Control
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="Enter your password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          style={{ padding: '12px', borderRadius: 6 }}
+                        />
+
+                    
+                      </div>
+                    </Form.Group>
+
+                    <Button
+                      type="submit"
+                      className="w-100 mt-3"
+                      disabled={loading}
+                      style={{
+                        backgroundColor: '#176B52',
+                        border: 'none',
+                        padding: '13px',
+                        borderRadius: '8px'
+                      }}
+                    >
+                      {loading ? 'Logging in...' : 'Login'}
+                    </Button>
+                  
+                  </Form>
+
+                  <p className="text-center mt-4 mb-0">
+                    Don't have an account? <Link to="/register">Register</Link>
+                  </p>
+               
+
+                </Card.Body>
+              </Card>
+            </div>
           </div>
-        </div>
+        </Container>
+      </main>
 
-        <button type="submit" className="btn-main" disabled={loading}>
-          {loading ? 'Logging in…' : 'Log in'}
-        </button>
-      </form>
-
-      <p className="form-foot">
-        New here? <Link to="/register">Create an account</Link>
-      </p>
-    </section>
+   
+    </>
   )
 }
 
